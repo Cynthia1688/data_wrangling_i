@@ -1,0 +1,177 @@
+---
+title: "Simple document"
+output: html_document
+---
+
+I'm an R Markdown document! 
+
+
+# Section 1
+
+Here's a **code chunk** that samples from 
+a _normal distribution_:
+```{r}
+library(tidyverse)
+getwd()
+```
+
+```{r}
+litter_df = read_csv(file = "./data/FAS_litters.csv")
+```
+
+```{r}
+names(litter_df)
+litter_df = janitor::clean_names(litter_df)
+```
+
+```{r}
+litter_df = 
+  read_csv(file = "./data/FAS_litters.csv", skip = 10, col_names = FALSE)
+
+head(litter_df)
+
+litter_df = 
+  read_csv(
+    file = "./data/FAS_litters.csv",
+    na = c(",", "NA", ""),
+    col_types = cols(
+      Group = col_character(),
+      `Litter Number` = col_character(),
+      `GD0 weight` = col_double(),
+      `GD18 weight` = col_double(),
+      `GD of Birth` = col_integer(),
+      `Pups born alive` = col_integer(),
+      `Pups dead @ birth` = col_integer(),
+      `Pups survive` = col_integer()
+    )
+  )
+
+litter_df = 
+  read_csv(
+    file = "./data/FAS_litters.csv",
+    na = c(",", "NA", ""),
+    col_types = cols(
+      Group = col_factor()
+    )
+  )
+
+head(litter_df)
+
+pups_df = 
+    read_csv("./data/FAS_pups.csv",
+        na = c(".", "NA"), col_types = "fddddd")
+
+skimr::skim(pups_df)
+```
+
+```{r}
+library(readxl)
+mlb11_df = read_excel("data/mlb11.xlsx", n_max = 20)
+```
+
+```{r}
+library(haven)
+
+pulse_df = 
+  read_sas("data/public_pulse_data.sas7bdat")
+
+head(pulse_df, 5)
+```
+
+```{r}
+options(tibble.print_min = 3)
+```
+
+```{r}
+litters_df = 
+    read_csv(
+      file = "./data/FAS_litters.csv", 
+      na = c("NA", ".", ""))
+
+litter_df = janitor::clean_names(litter_df)
+
+pups_df = 
+  read_csv(
+    file = "./data/FAS_pups.csv",
+    na = c("NA", ".")
+    )
+pups_df = 
+  janitor::clean_names(pups_df)
+
+select(litter_df, group, litter_number, gd0_weight, pups_born_alive)
+
+select(litter_df, group:gd_of_birth)
+
+select(litter_df, -pups_survive)
+
+rename(litter_df, GROUP = group, LiTtEr_NuMbEr = litter_number)
+
+select(litter_df, starts_with("gd"))
+
+select(litter_df, litter_number, pups_survive, everything())
+
+select(litter_df, litter_number, pups_survive,
+       everything())
+
+relocate(litter_df, litter_number, pups_survive)
+
+head(arrange(litter_df, group, pups_born_alive), 10)
+```
+
+```{r}
+litters_df_raw = 
+    read_csv("./data/FAS_litters.csv", na = c("NA", ".", ""))
+
+litters_df_clean_names = janitor::clean_names(litters_df_raw)
+litters_df_selected_cols = select(litters_df_clean_names, -pups_survive)
+litters_df_with_vars = 
+  mutate(
+    litters_df_selected_cols, 
+    wt_gain = gd18_weight - gd0_weight,
+    group = str_to_lower(group))
+litters_df_with_vars_without_missing = 
+  drop_na(litters_df_with_vars, wt_gain)
+litters_df_with_vars_without_missing
+```
+
+```{r}
+litters_df_clean = 
+  drop_na(
+    mutate(
+      select(
+        janitor::clean_names(
+          read_csv("./data/FAS_litters.csv", na = c("NA", ".", ""))
+          ), 
+      -pups_survive
+      ),
+    wt_gain = gd18_weight - gd0_weight,
+    group = str_to_lower(group)
+    ),
+  wt_gain
+  )
+```
+
+```{r}
+litters_df = 
+  read_csv("./data/FAS_litters.csv", na = c("NA", ".", "")) |> 
+  janitor::clean_names() |> 
+  select(-pups_survive) |> 
+  mutate(
+    wt_gain = gd18_weight - gd0_weight,
+    group = str_to_lower(group)) |> 
+  drop_na(wt_gain)
+```
+
+
+
+
+
+```{r}
+samp = rnorm(100)
+length(samp)
+```
+
+# Section 2
+
+I can take the mean of the sample, too!
+The mean is `r mean(samp)`.
